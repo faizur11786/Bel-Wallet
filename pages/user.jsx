@@ -14,11 +14,13 @@ const Wallet = (props) => {
 	const [balances, setBalances] = useState(null);
 	const [wallet, setWallet] = useState(null);
 
+	const [isExist, setIsExist] = useState(true);
+	const [merchants, setMerchants] = useState(null);
+
 	useEffect(() => {
 		(async () => {
 			const mnemonic =
-				'lamp weird level casino bulb jelly slow kit lunch kiss cake print inhale bomb apart cupboard scan behind stock village desk appear turtle wheel';
-
+				'lab quarter witness come frequent strong bird tribe run dwarf sick thumb tail salon endorse gym asthma ski life february dish review connect ecology';
 			const wallet = await DirectSecp256k1HdWallet.fromMnemonic(mnemonic, { prefix: 'share' });
 
 			const chain = new Client(
@@ -34,8 +36,14 @@ const Wallet = (props) => {
 			setWallet(accounts[0]);
 			const balance = await chain.CosmosBankV1Beta1.query.queryAllBalances(accounts[0].address);
 			setBalances(balance.data.balances);
+			await loadMerchants(chain);
 		})();
 	}, []);
+
+	const loadMerchants = async (client) => {
+		const res = await client.BelshareEav.query.queryMerchantNewAll();
+		setMerchants(res.data);
+	};
 
 	return (
 		<>
@@ -46,12 +54,28 @@ const Wallet = (props) => {
 				<link rel='icon' href='/favicon.ico' />
 			</Head>
 			<main className={styles.main}>
-				{wallet && <Profile client={client} wallet={wallet} />}
+				<h3 className={inter.className}>User's perspective</h3>
+				<br />
+				{wallet && <Profile client={client} setIsExist={setIsExist} wallet={wallet} />}
 				<div className={styles.formGroup}>
-					<Form.Entity client={client} wallet={wallet} />
-					<Form.Attribute client={client} wallet={wallet} />
-					<Form.User client={client} wallet={wallet} />
+					{/* <Form.Entity client={client} wallet={wallet} /> */}
+					{/* <Form.Attribute client={client} wallet={wallet} /> */}
+					{!isExist && <Form.User client={client} setIsExist={setIsExist} wallet={wallet} />}
 				</div>
+
+				{merchants ? (
+					<div className={`${inter.className} ${styles.merchantCard}`}>
+						{merchants.merchantNew.map((merchant, index) => (
+							<div key={index} className={styles.card}>
+								<h5 style={{ marginBottom: '0.25rem' }}>Merchant {index + 1}</h5>
+								<p>{merchant.address}</p>
+								<p>{merchant.guid}</p>
+							</div>
+						))}
+					</div>
+				) : (
+					'Merchant Not found'
+				)}
 			</main>
 		</>
 	);

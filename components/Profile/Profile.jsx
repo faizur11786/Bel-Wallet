@@ -3,7 +3,7 @@ import React, { useEffect, useState } from 'react';
 import styles from '../../styles/Home.module.css';
 const inter = Inter({ subsets: ['latin'] });
 
-const Profile = ({ client, wallet }) => {
+const Profile = ({ client, wallet, setIsExist }) => {
 	const [isLoading, setIsLoading] = useState(false);
 	const [attributes, setAttributes] = useState(null);
 	const [balances, setBalances] = useState(null);
@@ -19,14 +19,23 @@ const Profile = ({ client, wallet }) => {
 			);
 			setAttributes(filterRes);
 			await loadBalance();
+			let userRes;
+			try {
+				userRes = await client.BelshareEav.query.queryMerchantNew(wallet.address);
+				setIsExist(true);
+			} catch (error) {
+				setIsExist(false);
+				console.log(res);
+			}
 
-			console.log(client.BelshareEav.query);
-			res = await client.BelshareEav.query.queryMerchantAll();
-			const userRes = res.data.merchant.filter((data) => data.address === wallet.address);
+			if (!userRes) return;
 			let values = new Object();
 			for (let index = 0; index < filterRes.length; index++) {
 				try {
-					const res = await client.BelshareEav.query.queryValue(userRes[0].guid, filterRes[index].guid);
+					const res = await client.BelshareEav.query.queryValue(
+						userRes.data.merchantNew.guid,
+						filterRes[index].guid
+					);
 					Object.assign(values, {
 						[filterRes[index].name]: res.data.value.value,
 					});
@@ -34,7 +43,7 @@ const Profile = ({ client, wallet }) => {
 					console.log(error);
 				}
 			}
-			setUserInfo({ userRes, attributes: values });
+			setUserInfo({ userRes: res, attributes: values });
 		})();
 	}, [client]);
 
@@ -62,11 +71,11 @@ const Profile = ({ client, wallet }) => {
 
 	return (
 		<div className={`${inter.className} ${styles.profile}`}>
-			<h3>{wallet.address.toUpperCase()}</h3>
+			<h3>{wallet.address}</h3>
 			<ul className={styles.balances}>
 				{balances &&
-					balances.map((balance) => (
-						<li key={balances.denom}>
+					balances.map((balance, index) => (
+						<li key={index}>
 							<span>{`${balance.denom.toUpperCase()} : `}</span>
 							<span>{balance.amount}</span>
 						</li>
@@ -75,15 +84,17 @@ const Profile = ({ client, wallet }) => {
 					{isLoading ? 'Wait...' : 'Give me token faucet'}
 				</button>
 			</ul>
-			<ul className={styles.attributes}>
-				<h3>Attributes</h3>
-				{attributes &&
-					attributes.map((attribute, index) => (
-						<li key={index}>{`${attribute.name.toUpperCase()} - ${
-							!userInfo?.attributes[attribute.name] ? 'NA' : userInfo?.attributes[attribute.name]
-						}`}</li>
-					))}
-			</ul>
+			{userInfo && (
+				<ul className={styles.attributes}>
+					<h3>Attributes</h3>
+					{attributes &&
+						attributes.map((attribute, index) => (
+							<li key={index + 1}>{`${attribute.name.toUpperCase()} - ${
+								!userInfo?.attributes[attribute.name] ? 'NA' : userInfo?.attributes[attribute.name]
+							}`}</li>
+						))}
+				</ul>
+			)}
 		</div>
 	);
 };

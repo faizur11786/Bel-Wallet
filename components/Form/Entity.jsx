@@ -3,7 +3,7 @@ import React, { useState } from 'react';
 import styles from '../../styles/Home.module.css';
 const inter = Inter({ subsets: ['latin'] });
 
-const Entity = ({ client, wallet }) => {
+const Entity = ({ client, wallet, loadEntity }) => {
 	const [isLoading, setIsLoading] = useState(false);
 
 	const submitHandler = async (e) => {
@@ -30,6 +30,7 @@ const Entity = ({ client, wallet }) => {
 		});
 		console.log('ts', tx);
 		setIsLoading(false);
+		await loadEntity();
 	};
 
 	return (

@@ -14,10 +14,12 @@ const Wallet = (props) => {
 	const [balances, setBalances] = useState(null);
 	const [wallet, setWallet] = useState(null);
 
+	const [isExist, setIsExist] = useState(true);
+
 	useEffect(() => {
 		(async () => {
 			const mnemonic =
-				'unaware surface excess job post avoid river screen decide change strategy glow faculty retire odor seven will camera dwarf border wool little cupboard place';
+				'lamp weird level casino bulb jelly slow kit lunch kiss cake print inhale bomb apart cupboard scan behind stock village desk appear turtle wheel';
 
 			const wallet = await DirectSecp256k1HdWallet.fromMnemonic(mnemonic, { prefix: 'share' });
 
@@ -46,11 +48,13 @@ const Wallet = (props) => {
 				<link rel='icon' href='/favicon.ico' />
 			</Head>
 			<main className={styles.main}>
-				{wallet && <Profile client={client} wallet={wallet} />}
+				<h3 className={inter.className}>Merchant's perspective</h3>
+				<br />
+				{wallet && <Profile client={client} setIsExist={setIsExist} wallet={wallet} />}
 				<div className={styles.formGroup}>
 					{/* <Form.Entity client={client} wallet={wallet} /> */}
 					{/* <Form.Attribute client={client} wallet={wallet} /> */}
-					<Form.User client={client} wallet={wallet} />
+					{!isExist && <Form.Merchant client={client} setIsExist={setIsExist} wallet={wallet} />}
 				</div>
 			</main>
 		</>

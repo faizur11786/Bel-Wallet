@@ -3,17 +3,8 @@ import React, { useEffect, useState } from 'react';
 import styles from '../../styles/Home.module.css';
 const inter = Inter({ subsets: ['latin'] });
 
-const Attribute = ({ client, wallet }) => {
+const Attribute = ({ client, wallet, entitys }) => {
 	const [isLoading, setIsLoading] = useState(false);
-	const [entitys, setEntitys] = useState(null);
-
-	useEffect(() => {
-		(async () => {
-			if (!client) return;
-			const res = await client.BelshareEav.query.queryEntityTypeAll();
-			setEntitys(res.data.entityType);
-		})();
-	}, [client]);
 
 	const submitHandler = async (e) => {
 		setIsLoading(true);

@@ -70,7 +70,8 @@
 	opacity: 0.6;
 	font-size: 0.9rem;
 	line-height: 1.5;
-	max-width: 30ch;
+	margin-top: 0.5rem;
+	/* max-width: 30ch; */
 }
 
 .center {
@@ -328,4 +329,23 @@
 
 .attributes h3 {
 	color: rgb(82, 82, 82);
+}
+
+.nav {
+	display: flex;
+	justify-content: flex-end;
+	gap: 1rem;
+	list-style: none;
+	padding-top: 1rem;
+}
+
+.nav li a {
+	padding: 0.5rem 0.75rem;
+	display: block;
+}
+
+.merchantCard {
+	margin-top: 2rem;
+	display: flex;
+	gap: 1rem;
 }

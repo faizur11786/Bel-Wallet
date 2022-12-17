@@ -3,7 +3,7 @@ import React, { useEffect, useState } from 'react';
 import styles from '../../styles/Home.module.css';
 const inter = Inter({ subsets: ['latin'] });
 
-const User = ({ client, wallet, setIsExist }) => {
+const Merchant = ({ client, wallet, setIsExist }) => {
 	const [isLoading, setIsLoading] = useState(false);
 	const [attributea, setAttributea] = useState(null);
 
@@ -13,7 +13,7 @@ const User = ({ client, wallet, setIsExist }) => {
 			const entitytyperes = await client.BelshareEav.query.queryEntityTypeAll();
 			const res = await client.BelshareEav.query.queryAttributeAll();
 			let filterRes = res.data.attribute.filter(
-				(attribute) => entitytyperes.data.entityType[1].guid === attribute.entityId
+				(attribute) => entitytyperes.data.entityType[0].guid === attribute.entityId
 			);
 			setAttributea(filterRes);
 		})();
@@ -61,7 +61,7 @@ const User = ({ client, wallet, setIsExist }) => {
 
 	return (
 		<form className={styles.form} onSubmit={submitHandler}>
-			<h4 className={inter.className}>Become User</h4>
+			<h4 className={inter.className}>Become a merchant</h4>
 			{attributea &&
 				attributea.map((attribute) => (
 					<input
@@ -77,4 +77,4 @@ const User = ({ client, wallet, setIsExist }) => {
 	);
 };
 
-export default User;
+export default Merchant;
