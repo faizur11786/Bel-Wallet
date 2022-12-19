@@ -9,11 +9,9 @@ import Profile from '../components/Profile/Profile';
 const inter = Inter({ subsets: ['latin'] });
 
 const Wallet = (props) => {
-	const [tx, setTx] = useState(null);
 	const [client, setClient] = useState(null);
-	const [balances, setBalances] = useState(null);
 	const [wallet, setWallet] = useState(null);
-
+	const [info, setInfo] = useState(null);
 	const [isExist, setIsExist] = useState(true);
 
 	useEffect(() => {
@@ -34,10 +32,19 @@ const Wallet = (props) => {
 			setClient(chain);
 			const accounts = await wallet.getAccounts();
 			setWallet(accounts[0]);
-			const balance = await chain.CosmosBankV1Beta1.query.queryAllBalances(accounts[0].address);
-			setBalances(balance.data.balances);
+			await loadInfo(chain, accounts[0].address);
 		})();
 	}, []);
+
+	const loadInfo = async (client, address) => {
+		try {
+			const entitytyperes = await client.BelshareEav.query.queryEntityTypeAll();
+			const res = await client.BelshareEav.query.queryMerchantNew(address, entitytyperes.data.entityType[0].guid);
+			setInfo(res.data);
+		} catch (error) {
+			console.log(error);
+		}
+	};
 
 	return (
 		<>
@@ -50,7 +57,7 @@ const Wallet = (props) => {
 			<main className={styles.main}>
 				<h3 className={inter.className}>Merchant's perspective</h3>
 				<br />
-				{wallet && <Profile client={client} setIsExist={setIsExist} wallet={wallet} />}
+				{wallet && <Profile info={info} client={client} setIsExist={setIsExist} wallet={wallet} />}
 				<div className={styles.formGroup}>
 					{/* <Form.Entity client={client} wallet={wallet} /> */}
 					{/* <Form.Attribute client={client} wallet={wallet} /> */}

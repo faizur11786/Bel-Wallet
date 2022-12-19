@@ -11,11 +11,10 @@ const User = ({ client, wallet, setIsExist }) => {
 		(async () => {
 			if (!client) return;
 			const entitytyperes = await client.BelshareEav.query.queryEntityTypeAll();
-			const res = await client.BelshareEav.query.queryAttributeAll();
-			let filterRes = res.data.attribute.filter(
-				(attribute) => entitytyperes.data.entityType[1].guid === attribute.entityId
+			const attribute = await client.BelshareEav.query.queryEntityAttributes(
+				entitytyperes.data.entityType[1].guid
 			);
-			setAttributea(filterRes);
+			setAttributea(attribute.data.attributes);
 		})();
 	}, [client]);
 
@@ -46,8 +45,8 @@ const User = ({ client, wallet, setIsExist }) => {
 			console.error('something went wrong');
 			return;
 		}
-		// console.log('client.BelshareEav.tx', client.BelshareEav.tx);
-		const tx = await client.BelshareEav.tx.sendMsgNewMerchant({
+		console.log('client.BelshareEav.tx', client.BelshareEav.tx);
+		const tx = await client.BelshareEav.tx.sendMsgCreateNewUser({
 			value: {
 				attributes: values,
 				address: wallet.address,

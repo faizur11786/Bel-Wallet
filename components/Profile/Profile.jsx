@@ -3,47 +3,13 @@ import React, { useEffect, useState } from 'react';
 import styles from '../../styles/Home.module.css';
 const inter = Inter({ subsets: ['latin'] });
 
-const Profile = ({ client, wallet, setIsExist }) => {
+const Profile = ({ info, client, wallet, setIsExist, merchants }) => {
 	const [isLoading, setIsLoading] = useState(false);
-	const [attributes, setAttributes] = useState(null);
 	const [balances, setBalances] = useState(null);
-	const [userInfo, setUserInfo] = useState(null);
 
 	useEffect(() => {
 		(async () => {
-			if (!client) return;
-			const entitytyperes = await client.BelshareEav.query.queryEntityTypeAll();
-			let res = await client.BelshareEav.query.queryAttributeAll();
-			let filterRes = res.data.attribute.filter(
-				(attribute) => entitytyperes.data.entityType[0].guid === attribute.entityId
-			);
-			setAttributes(filterRes);
 			await loadBalance();
-			let userRes;
-			try {
-				userRes = await client.BelshareEav.query.queryMerchantNew(wallet.address);
-				setIsExist(true);
-			} catch (error) {
-				setIsExist(false);
-				console.log(res);
-			}
-
-			if (!userRes) return;
-			let values = new Object();
-			for (let index = 0; index < filterRes.length; index++) {
-				try {
-					const res = await client.BelshareEav.query.queryValue(
-						userRes.data.merchantNew.guid,
-						filterRes[index].guid
-					);
-					Object.assign(values, {
-						[filterRes[index].name]: res.data.value.value,
-					});
-				} catch (error) {
-					console.log(error);
-				}
-			}
-			setUserInfo({ userRes: res, attributes: values });
 		})();
 	}, [client]);
 
@@ -69,6 +35,15 @@ const Profile = ({ client, wallet, setIsExist }) => {
 		setIsLoading(false);
 	};
 
+	const shareHandler = (e) => {
+		setIsLoading(true);
+		e.preventDefault();
+		const form = new FormData(e.currentTarget);
+
+		let values = new Array();
+		setIsLoading(false);
+	};
+
 	return (
 		<div className={`${inter.className} ${styles.profile}`}>
 			<h3>{wallet.address}</h3>
@@ -84,15 +59,34 @@ const Profile = ({ client, wallet, setIsExist }) => {
 					{isLoading ? 'Wait...' : 'Give me token faucet'}
 				</button>
 			</ul>
-			{userInfo && (
+			{info?.attributes && (
 				<ul className={styles.attributes}>
 					<h3>Attributes</h3>
-					{attributes &&
-						attributes.map((attribute, index) => (
-							<li key={index + 1}>{`${attribute.name.toUpperCase()} - ${
-								!userInfo?.attributes[attribute.name] ? 'NA' : userInfo?.attributes[attribute.name]
-							}`}</li>
-						))}
+					{info.attributes.map((attribute, index) => (
+						<li key={index + 1}>
+							<div>
+								<p>{`${attribute.label.toUpperCase()} - ${
+									!attribute.value ? 'NA' : attribute.value
+								}`}</p>
+								{merchants && (
+									<form onSubmit={shareHandler}>
+										<select name='merchant' id=''>
+											{merchants.merchantNew.map((merchant, index) => {
+												return (
+													<option key={index + 1} value={merchant.address}>
+														{merchant.address}
+													</option>
+												);
+											})}
+										</select>
+										<button disabled={isLoading}>
+											{isLoading ? 'Loading...' : 'Share with them'}
+										</button>
+									</form>
+								)}
+							</div>
+						</li>
+					))}
 				</ul>
 			)}
 		</div>

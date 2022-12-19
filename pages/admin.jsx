@@ -39,9 +39,17 @@ const Wallet = (props) => {
 		})();
 	}, []);
 
+	useEffect(() => {
+		(async () => await loadEntity())();
+	}, [client]);
+
 	const loadEntity = async () => {
-		const res = await client.BelshareEav.query.queryEntityTypeAll();
-		setEntitys(res.data.entityType);
+		try {
+			const res = await client.BelshareEav.query.queryEntityTypeAll();
+			setEntitys(res.data.entityType);
+		} catch (error) {
+			console.log(error);
+		}
 	};
 
 	return (
