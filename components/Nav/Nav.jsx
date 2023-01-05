@@ -8,6 +8,11 @@ const Nav = () => {
 	return (
 		<ul className={`${inter.className} ${styles.nav}`}>
 			<li>
+				<Link href='/explorer' target={'_blank'}>
+					Explorer
+				</Link>
+			</li>
+			<li>
 				<Link href='/user'>User</Link>
 			</li>
 			<li>

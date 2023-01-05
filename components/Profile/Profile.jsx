@@ -9,10 +9,29 @@ const Profile = ({ info, client, wallet, setIsExist, merchants }) => {
 
 	useEffect(() => {
 		(async () => {
-			await loadBalance();
+			// await loadBalance();
+			// const ws = new WebSocket('ws://127.0.0.1:26657/websocket');
+			// console.log('es', ws);
+			// const obj = new Object({
+			// 	jsonrpc: '2.0',
+			// 	method: 'subscribe',
+			// 	id: 0,
+			// 	params: { query: "tm.event='NewBlock'" },
+			// });
+			// ws.onopen = () => {
+			// 	ws.send(JSON.stringify(obj));
+			// };
+			// ws.onmessage = (data) => {
+			// 	console.log(JSON.parse(data.data));
+			// };
+			// const keplr = await client.useKeplr();
+			// console.log('keplr', keplr);
 		})();
 	}, [client]);
 
+	useEffect(() => {
+		loadBalance();
+	}, []);
 	const loadBalance = async () => {
 		const balance = await client.CosmosBankV1Beta1.query.queryAllBalances(wallet.address);
 		setBalances(balance.data.balances);
@@ -27,7 +46,7 @@ const Profile = ({ info, client, wallet, setIsExist, merchants }) => {
 			},
 			body: JSON.stringify({
 				address: wallet.address,
-				coins: ['10token', '50stake'],
+				coins: ['10belc'],
 			}),
 		}).then((res) => res.json());
 		console.log('tx', tx);
@@ -71,10 +90,10 @@ const Profile = ({ info, client, wallet, setIsExist, merchants }) => {
 								{merchants && (
 									<form onSubmit={shareHandler}>
 										<select name='merchant' id=''>
-											{merchants.merchantNew.map((merchant, index) => {
+											{merchants.merchants.map((merchant, index) => {
 												return (
-													<option key={index + 1} value={merchant.address}>
-														{merchant.address}
+													<option key={index + 1} value={merchant.creator}>
+														{merchant.creator}
 													</option>
 												);
 											})}

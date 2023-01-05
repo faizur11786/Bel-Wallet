@@ -10,12 +10,20 @@ const Merchant = ({ client, wallet, setIsExist }) => {
 	useEffect(() => {
 		(async () => {
 			if (!client) return;
-			const entitytyperes = await client.BelshareEav.query.queryEntityTypeAll();
-			const res = await client.BelshareEav.query.queryAttributeAll();
-			let filterRes = res.data.attribute.filter(
-				(attribute) => entitytyperes.data.entityType[0].guid === attribute.entityId
-			);
-			setAttributea(filterRes);
+			try {
+				const {
+					data: { entityTypes },
+				} = await client.BeltestEav.query.queryEntityTypesAll();
+				const guid =
+					entityTypes[0].name.toLowerCase() === 'merchant' ? entityTypes[0].guid : entityTypes[1].guid;
+
+				const {
+					data: { attributes },
+				} = await client.BeltestEav.query.queryAttributes(guid);
+				setAttributea(attributes);
+			} catch (error) {
+				console.log(error);
+			}
 		})();
 	}, [client]);
 
@@ -29,34 +37,36 @@ const Merchant = ({ client, wallet, setIsExist }) => {
 			if (pair[1]) {
 				values.push({
 					guid: pair[0],
-					name: pair[1],
-					entityId: '',
+					value: pair[1],
 				});
 			}
 		}
-
-		console.log('values', {
-			attributs: values,
-			address: wallet.address,
-			creator: wallet.address,
-		});
 
 		if (!values || !client || !wallet) {
 			setIsLoading(false);
 			console.error('something went wrong');
 			return;
 		}
-		// console.log('client.BelshareEav.tx', client.BelshareEav.tx);
-		const tx = await client.BelshareEav.tx.sendMsgNewMerchant({
-			value: {
+		try {
+			const {
+				[0]: { address },
+			} = await client.signer.getAccounts();
+
+			const payload = {
 				attributes: values,
-				address: wallet.address,
-				creator: wallet.address,
-			},
-		});
-		console.log('ts', tx);
-		setIsExist(true);
-		setIsLoading(false);
+				creator: address,
+			};
+			console.log('payload', payload);
+			const tx = await client.BeltestEav.tx.sendMsgCreateMerchant({
+				value: payload,
+			});
+			console.log('ts', tx);
+			setIsExist(true);
+			setIsLoading(false);
+		} catch (error) {
+			setIsLoading(false);
+			console.log(error);
+		}
 	};
 
 	return (

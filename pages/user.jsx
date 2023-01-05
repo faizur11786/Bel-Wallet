@@ -2,7 +2,7 @@ import { Inter } from '@next/font/google';
 import Head from 'next/head';
 import React, { useEffect, useState } from 'react';
 import styles from '../styles/Home.module.css';
-import { Client } from '../../belShare/ts-client';
+import { Client } from '../../beltest/ts-client';
 import { DirectSecp256k1HdWallet } from '@cosmjs/proto-signing';
 import Form from '../components/Form';
 import Profile from '../components/Profile/Profile';
@@ -21,37 +21,42 @@ const Wallet = (props) => {
 		(async () => {
 			const mnemonic =
 				'lab quarter witness come frequent strong bird tribe run dwarf sick thumb tail salon endorse gym asthma ski life february dish review connect ecology';
-			const wallet = await DirectSecp256k1HdWallet.fromMnemonic(mnemonic, { prefix: 'share' });
+			const wallet = await DirectSecp256k1HdWallet.fromMnemonic(mnemonic, { prefix: 'be' });
 
 			const chain = new Client(
 				{
 					apiURL: 'http://localhost:1317',
 					rpcURL: 'http://localhost:26657',
-					prefix: 'share',
+					prefix: 'be',
 				},
 				wallet
 			);
 			setClient(chain);
 			const accounts = await wallet.getAccounts();
 			setWallet(accounts[0]);
-			await loadMerchants(chain);
 			await loadInfo(chain, accounts[0].address);
+			await loadMerchants(chain);
 		})();
 	}, []);
 
 	const loadInfo = async (client, address) => {
 		try {
-			const entitytyperes = await client.BelshareEav.query.queryEntityTypeAll();
-			const res = await client.BelshareEav.query.queryNewUser(address, entitytyperes.data.entityType[1].guid);
-			setInfo(res.data);
+			const {
+				data: { entityTypes },
+			} = await client.BeltestEav.query.queryEntityTypesAll();
+			const guid = entityTypes[0].name.toLowerCase() === 'user' ? entityTypes[0].guid : entityTypes[1].guid;
+
+			const { data } = await client.BeltestEav.query.queryUsers(address, guid);
+			setInfo(data);
 		} catch (error) {
 			console.log(error);
 		}
 	};
 
 	const loadMerchants = async (client) => {
-		const res = await client.BelshareEav.query.queryMerchantNewAll();
-		setMerchants(res.data);
+		const { data } = await client.BeltestEav.query.queryMerchantsAll();
+		console.log(data);
+		setMerchants(data);
 	};
 
 	return (
@@ -81,11 +86,10 @@ const Wallet = (props) => {
 
 				{merchants ? (
 					<div className={`${inter.className} ${styles.merchantCard}`}>
-						{merchants.merchantNew.map((merchant, index) => (
+						{merchants.merchants.map((merchant, index) => (
 							<div key={index} className={styles.card}>
 								<h5 style={{ marginBottom: '0.25rem' }}>Merchant {index + 1}</h5>
-								<p>{merchant.address}</p>
-								<p>{merchant.guid}</p>
+								<p>{merchant.creator}</p>
 							</div>
 						))}
 					</div>

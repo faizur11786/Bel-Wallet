@@ -21,16 +21,25 @@ const Entity = ({ client, wallet, loadEntity }) => {
 			console.error('something went wrong');
 			return;
 		}
+		const {
+			[0]: { address },
+		} = await client.signer.getAccounts();
+		console.log('client', client);
 
-		const tx = await client.BelshareEav.tx.sendMsgCreateEntityType({
-			value: {
-				name: values.name,
-				creator: wallet.address,
-			},
-		});
-		console.log('ts', tx);
-		setIsLoading(false);
-		await loadEntity();
+		try {
+			const tx = await client.BeltestEav.tx.sendMsgCreateEntityType({
+				value: {
+					name: values.name,
+					creator: address,
+				},
+			});
+			console.log('ts', tx);
+			setIsLoading(false);
+			await loadEntity();
+		} catch (error) {
+			setIsLoading(false);
+			console.log('error', error);
+		}
 	};
 
 	return (

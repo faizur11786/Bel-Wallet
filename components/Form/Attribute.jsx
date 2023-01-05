@@ -21,14 +21,23 @@ const Attribute = ({ client, wallet, entitys }) => {
 			console.error('something went wrong');
 			return;
 		}
-		const tx = await client.BelshareEav.tx.sendMsgCraeteAtteibute({
-			value: {
-				...values,
-				creator: wallet.address,
-			},
-		});
-		console.log('ts', tx);
-		setIsLoading(false);
+		console.log('client', { client, values });
+		const {
+			[0]: { address },
+		} = await client.signer.getAccounts();
+		try {
+			const tx = await client.BeltestEav.tx.sendMsgCreateAttribute({
+				value: {
+					...values,
+					creator: address,
+				},
+			});
+			console.log('ts', tx);
+			setIsLoading(false);
+		} catch (error) {
+			setIsLoading(false);
+			console.log(error);
+		}
 	};
 
 	return (

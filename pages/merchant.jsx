@@ -2,7 +2,7 @@ import { Inter } from '@next/font/google';
 import Head from 'next/head';
 import React, { useEffect, useState } from 'react';
 import styles from '../styles/Home.module.css';
-import { Client } from '../../belShare/ts-client';
+import { Client } from '../../beltest/ts-client';
 import { DirectSecp256k1HdWallet } from '@cosmjs/proto-signing';
 import Form from '../components/Form';
 import Profile from '../components/Profile/Profile';
@@ -19,13 +19,13 @@ const Wallet = (props) => {
 			const mnemonic =
 				'lamp weird level casino bulb jelly slow kit lunch kiss cake print inhale bomb apart cupboard scan behind stock village desk appear turtle wheel';
 
-			const wallet = await DirectSecp256k1HdWallet.fromMnemonic(mnemonic, { prefix: 'share' });
+			const wallet = await DirectSecp256k1HdWallet.fromMnemonic(mnemonic, { prefix: 'be' });
 
 			const chain = new Client(
 				{
 					apiURL: 'http://localhost:1317',
 					rpcURL: 'http://localhost:26657',
-					prefix: 'share',
+					prefix: 'be',
 				},
 				wallet
 			);
@@ -38,9 +38,13 @@ const Wallet = (props) => {
 
 	const loadInfo = async (client, address) => {
 		try {
-			const entitytyperes = await client.BelshareEav.query.queryEntityTypeAll();
-			const res = await client.BelshareEav.query.queryMerchantNew(address, entitytyperes.data.entityType[0].guid);
-			setInfo(res.data);
+			const {
+				data: { entityTypes },
+			} = await client.BeltestEav.query.queryEntityTypesAll();
+			const guid = entityTypes[0].name.toLowerCase() === 'user' ? entityTypes[0].guid : entityTypes[1].guid;
+			const { data } = await client.BeltestEav.query.queryMerchants(address, guid);
+			console.log('res', data);
+			setInfo(data);
 		} catch (error) {
 			console.log(error);
 		}
@@ -61,7 +65,7 @@ const Wallet = (props) => {
 				<div className={styles.formGroup}>
 					{/* <Form.Entity client={client} wallet={wallet} /> */}
 					{/* <Form.Attribute client={client} wallet={wallet} /> */}
-					{!isExist && <Form.Merchant client={client} setIsExist={setIsExist} wallet={wallet} />}
+					{<Form.Merchant client={client} setIsExist={setIsExist} wallet={wallet} />}
 				</div>
 			</main>
 		</>

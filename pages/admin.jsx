@@ -2,16 +2,14 @@ import { Inter } from '@next/font/google';
 import Head from 'next/head';
 import React, { useEffect, useState } from 'react';
 import styles from '../styles/Home.module.css';
-import { Client } from '../../belShare/ts-client';
+import { Client } from '../../beltest/ts-client';
 import { DirectSecp256k1HdWallet } from '@cosmjs/proto-signing';
 import Form from '../components/Form';
 import Profile from '../components/Profile/Profile';
 const inter = Inter({ subsets: ['latin'] });
 
 const Wallet = (props) => {
-	const [tx, setTx] = useState(null);
 	const [client, setClient] = useState(null);
-	const [balances, setBalances] = useState(null);
 	const [wallet, setWallet] = useState(null);
 	const [isExist, setIsExist] = useState(true);
 	const [entitys, setEntitys] = useState(null);
@@ -19,23 +17,21 @@ const Wallet = (props) => {
 	useEffect(() => {
 		(async () => {
 			const mnemonic =
-				'grief solid design way enlist defy organ glare elephant push assume embody stomach inhale fiction impose wrestle then wash injury happy amateur cost assist';
+				'lamp weird level casino bulb jelly slow kit lunch kiss cake print inhale bomb apart cupboard scan behind stock village desk appear turtle wheel';
 
-			const wallet = await DirectSecp256k1HdWallet.fromMnemonic(mnemonic, { prefix: 'share' });
+			const wallet = await DirectSecp256k1HdWallet.fromMnemonic(mnemonic, { prefix: 'be' });
 
 			const chain = new Client(
 				{
 					apiURL: 'http://localhost:1317',
 					rpcURL: 'http://localhost:26657',
-					prefix: 'share',
+					prefix: 'be',
 				},
 				wallet
 			);
 			setClient(chain);
 			const accounts = await wallet.getAccounts();
 			setWallet(accounts[0]);
-			const balance = await chain.CosmosBankV1Beta1.query.queryAllBalances(accounts[0].address);
-			setBalances(balance.data.balances);
 		})();
 	}, []);
 
@@ -45,8 +41,11 @@ const Wallet = (props) => {
 
 	const loadEntity = async () => {
 		try {
-			const res = await client.BelshareEav.query.queryEntityTypeAll();
-			setEntitys(res.data.entityType);
+			if (!client) return;
+			const res = await client.BeltestEav.query.queryEntityTypesAll();
+
+			console.log('Entity Types', res.data);
+			setEntitys(res.data.entityTypes);
 		} catch (error) {
 			console.log(error);
 		}
@@ -67,7 +66,6 @@ const Wallet = (props) => {
 				<div className={styles.formGroup}>
 					<Form.Entity client={client} wallet={wallet} loadEntity={loadEntity} />
 					<Form.Attribute client={client} wallet={wallet} entitys={entitys} />
-					{/* <Form.User client={client} wallet={wallet} /> */}
 				</div>
 			</main>
 		</>
