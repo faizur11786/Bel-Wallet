@@ -2,7 +2,7 @@ import { Inter } from '@next/font/google';
 import Head from 'next/head';
 import React, { useEffect, useState } from 'react';
 import styles from '../styles/Home.module.css';
-import { Client } from '../../belShare/ts-client';
+import { Client } from '../../belshare-blockchainv1.0/ts-client';
 import { DirectSecp256k1HdWallet } from '@cosmjs/proto-signing';
 import Form from '../components/Form';
 import Profile from '../components/Profile/Profile';
