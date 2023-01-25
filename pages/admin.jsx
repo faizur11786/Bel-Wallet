@@ -3,7 +3,6 @@ import Head from "next/head";
 import React, { useEffect, useState } from "react";
 import styles from "../styles/Home.module.css";
 import { Client } from "../../belshare-blockchainv1.0/ts-client";
-import * as Client2 from "../../belshare-blockchainv1.0/ts-client";
 import { DirectSecp256k1HdWallet } from "@cosmjs/proto-signing";
 import Form from "../components/Form";
 import Profile from "../components/Profile/Profile";
@@ -15,7 +14,6 @@ const Wallet = (props) => {
     const [isExist, setIsExist] = useState(true);
     const [entitys, setEntitys] = useState(null);
 
-    console.log("Client2", Client2);
     useEffect(() => {
         (async () => {
             const mnemonic =
