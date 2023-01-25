@@ -82,7 +82,7 @@ const Wallet = (props) => {
                 [0]: { address: address1 },
             } = await client.signer.getAccounts();
             const { data: sharedData } =
-                await client.BeltestEav.query.queryShowSharedWith(
+                await client.BeltestEav.query.querySharedWith(
                     entityTypes[0].name.toLowerCase() === "user"
                         ? entityTypes[0].guid
                         : entityTypes[1].guid,

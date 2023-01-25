@@ -17,21 +17,19 @@ const Wallet = (props) => {
     useEffect(() => {
         (async () => {
             const mnemonic =
-                "lamp weird level casino bulb jelly slow kit lunch kiss cake print inhale bomb apart cupboard scan behind stock village desk appear turtle wheel";
+                "hazard tomato paper crime process moment soup market aware hole jeans engage display avoid shock keen tank shove betray occur spike type across pioneer";
 
             const wallet = await DirectSecp256k1HdWallet.fromMnemonic(
                 mnemonic,
                 { prefix: "be" }
             );
 
-            const chain = new Client(
-                {
-                    apiURL: "http://localhost:1317",
-                    rpcURL: "http://localhost:26657",
-                    prefix: "be",
-                },
-                wallet
-            );
+            const chain = new Client({
+                apiURL: "http://localhost:1317",
+                rpcURL: "http://localhost:26657",
+                prefix: "be",
+            });
+            console.log("chain", chain.useKeplr());
             setClient(chain);
             const accounts = await wallet.getAccounts();
             setWallet(accounts[0]);
