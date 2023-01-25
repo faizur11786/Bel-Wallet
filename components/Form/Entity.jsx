@@ -24,14 +24,19 @@ const Entity = ({ client, wallet, loadEntity }) => {
         const {
             [0]: { address },
         } = await client.signer.getAccounts();
-        console.log("client", client);
 
         try {
+            console.log("client", client.BeltestEav.tx);
+            const fee = {
+                amount: [{ denom: "belc", amount: "1" }],
+                gas: "200000",
+            };
             const tx = await client.BeltestEav.tx.sendMsgCreateEntityType({
                 value: {
                     name: values.name,
                     creator: address,
                 },
+                fee,
             });
             console.log("ts", tx);
             setIsLoading(false);

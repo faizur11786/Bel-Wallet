@@ -3,6 +3,7 @@ import Head from "next/head";
 import React, { useEffect, useState } from "react";
 import styles from "../styles/Home.module.css";
 import { Client } from "../../belshare-blockchainv1.0/ts-client";
+import * as Client2 from "../../belshare-blockchainv1.0/ts-client";
 import { DirectSecp256k1HdWallet } from "@cosmjs/proto-signing";
 import Form from "../components/Form";
 import Profile from "../components/Profile/Profile";
@@ -14,24 +15,23 @@ const Wallet = (props) => {
     const [isExist, setIsExist] = useState(true);
     const [entitys, setEntitys] = useState(null);
 
+    console.log("Client2", Client2);
     useEffect(() => {
         (async () => {
             const mnemonic =
-                "lamp weird level casino bulb jelly slow kit lunch kiss cake print inhale bomb apart cupboard scan behind stock village desk appear turtle wheel";
+                "hazard tomato paper crime process moment soup market aware hole jeans engage display avoid shock keen tank shove betray occur spike type across pioneer";
 
             const wallet = await DirectSecp256k1HdWallet.fromMnemonic(
                 mnemonic,
                 { prefix: "be" }
             );
 
-            const chain = new Client(
-                {
-                    apiURL: "http://localhost:1317",
-                    rpcURL: "http://localhost:26657",
-                    prefix: "be",
-                },
-                wallet
-            );
+            const chain = new Client({
+                apiURL: "http://localhost:1317",
+                rpcURL: "http://localhost:26657",
+                prefix: "be",
+            });
+            console.log("chain", chain.useKeplr());
             setClient(chain);
             const accounts = await wallet.getAccounts();
             setWallet(accounts[0]);
