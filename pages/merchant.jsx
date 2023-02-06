@@ -63,6 +63,12 @@ const Wallet = (props) => {
         })();
     }, []);
 
+    const connectHandler = async () => {
+        if (!client) return;
+        console.log("client", client);
+        await client.useKeplr();
+    };
+
     const loadInfo = async (client, address) => {
         try {
             const {
@@ -111,6 +117,8 @@ const Wallet = (props) => {
                 <link rel="icon" href="/favicon.ico" />
             </Head>
             <main className={styles.main}>
+                <button onClick={connectHandler}>Connect</button>
+
                 <h3 className={inter.className}>Merchant's perspective</h3>
                 <br />
                 {wallet && (

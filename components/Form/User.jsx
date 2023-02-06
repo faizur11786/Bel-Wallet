@@ -64,7 +64,7 @@ const User = ({ client, wallet, setIsExist, loadInfo }) => {
                 value: payload,
             });
             console.log("ts", tx);
-            await loadInfo();
+            await loadInfo(client, address);
             setIsExist(true);
             setIsLoading(false);
         } catch (error) {
@@ -72,8 +72,9 @@ const User = ({ client, wallet, setIsExist, loadInfo }) => {
             console.log(error);
         }
     };
-    console.log("client", client);
+    // console.log("client", client);
     const submitHandler2 = async (e) => {
+        console.log("client", client);
         setIsLoading(true);
         e.preventDefault();
         const form = new FormData(e.currentTarget);

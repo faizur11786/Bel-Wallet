@@ -25,11 +25,11 @@ const Wallet = (props) => {
             );
 
             const chain = new Client({
-                apiURL: "http://localhost:1317",
-                rpcURL: "http://localhost:26657",
+                apiURL: "http://13.213.247.11:1317",
+                rpcURL: "http://13.213.247.11:26657",
                 prefix: "be",
             });
-            console.log("chain", chain.useKeplr());
+
             setClient(chain);
             const accounts = await wallet.getAccounts();
             setWallet(accounts[0]);
@@ -69,6 +69,12 @@ const Wallet = (props) => {
         console.log("data", data);
     };
 
+    const connectHandler = async () => {
+        if (!client) return;
+        console.log("client", client);
+        await client.useKeplr();
+    };
+
     return (
         <>
             <Head>
@@ -83,6 +89,7 @@ const Wallet = (props) => {
                 />
                 <link rel="icon" href="/favicon.ico" />
             </Head>
+            <button onClick={connectHandler}>Connect</button>
             {/* <button onClick={updateEntityType}>Change Entity type name</button> */}
             <main className={styles.main}>
                 <h3 className={inter.className}>Admin's perspective</h3>
